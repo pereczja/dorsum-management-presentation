@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dorsum × 1337 | AI Transzformáció — Management Nap</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FBFAF4;
+            --card: #EAEBE4;
+            --text: #111111;
+            --purple: #783FF3;
+            --orange: #FA7E00;
+            --stone: #78716c;
+            --stone-dark: #44403c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Mono', Consolas, monospace;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Password protection */
+        .password-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .password-overlay.hidden { display: none; }
+        .password-box { text-align: center; padding: 3rem; }
+        .password-box h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            margin-bottom: 1.5rem; color: var(--purple);
+        }
+        .password-box input {
+            font-family: 'DM Mono', monospace; font-size: 1.2rem;
+            padding: 0.75rem 1.5rem; border: 2px solid var(--purple);
+            border-radius: 8px; background: white; text-align: center; width: 200px;
+        }
+        .password-box input:focus { outline: none; box-shadow: 0 0 0 3px rgba(120, 63, 243, 0.2); }
+        .password-box .error { color: var(--orange); margin-top: 1rem; font-size: 0.9rem; }
+        .content-wrapper { display: none; }
+        .content-wrapper.visible { display: block; }
+
+        .slide {
+            min-height: 100vh; scroll-snap-align: start;
+            padding: 60px 80px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 500; }
+        h1 { font-size: 3.5rem; line-height: 1.1; margin-bottom: 1.5rem; }
+        h2 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 1rem; }
+        h3 { font-size: 1.4rem; margin-bottom: 0.75rem; }
+
+        .subtitle { font-size: 1.1rem; color: var(--stone); max-width: 700px; }
+
+        .badge {
+            display: inline-block; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--purple); border: 1px solid var(--purple);
+            padding: 0.25rem 0.75rem; border-radius: 2px; margin-bottom: 1rem;
+        }
+        .badge.filled { background: var(--purple); color: white; border: none; }
+        .badge.orange { background: var(--orange); color: white; border: none; }
+
+        .stamp { position: absolute; bottom: 40px; right: 60px; }
+        .stamp img { width: 120px; opacity: 0.5; }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--bg) 0%, #f5f4ee 100%); }
+        .hero-logo { margin-bottom: 2rem; }
+        .hero-logo img { height: 45px; }
+        .hero h1 span { color: var(--purple); }
+        .hero-meta {
+            position: absolute; bottom: 60px; left: 80px;
+            font-size: 0.9rem; color: var(--stone);
+        }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1.25rem; margin-top: 2rem; }
+        .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin-top: 2rem; }
+
+        /* Cards */
+        .card { background: var(--card); padding: 1.5rem; border-radius: 8px; }
+        .card.purple { background: var(--purple); color: white; }
+        .card.purple h3 { color: white; }
+        .card.orange { background: var(--orange); color: white; }
+        .card.orange h3 { color: white; }
+        .card.bordered { border: 2px solid var(--purple); background: white; }
+        .card h3 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+        .card p, .card li { font-size: 0.85rem; color: var(--stone-dark); }
+        .card.purple p, .card.purple li, .card.orange p, .card.orange li { color: rgba(255,255,255,0.9); }
+        .card ul { list-style: none; }
+        .card ul li { padding: 0.3rem 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        .card ul li:last-child { border-bottom: none; }
+        .card.purple ul li, .card.orange ul li { border-color: rgba(255,255,255,0.15); }
+
+        .big-number {
+            font-size: 3rem; font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 600; color: var(--purple); line-height: 1;
+        }
+        .card.purple .big-number, .card.orange .big-number { color: white; }
+
+        /* Decision box */
+        .decision-box {
+            margin-top: 1.5rem; padding: 1rem 1.5rem;
+            background: rgba(120, 63, 243, 0.1);
+            border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0;
+        }
+        .decision-box h4 {
+            font-size: 0.8rem; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--purple); margin-bottom: 0.5rem;
+        }
+        .decision-box p { font-size: 0.9rem; color: var(--stone-dark); }
+
+        /* Agenda items */
+        .agenda-item {
+            display: flex; align-items: center; gap: 1.5rem;
+            padding: 1rem 1.25rem; border-radius: 8px; background: var(--card);
+            margin-bottom: 0.5rem; transition: transform 0.2s;
+        }
+        .agenda-item:hover { transform: translateX(8px); }
+        .agenda-time {
+            font-size: 1.3rem; font-weight: 600; color: var(--purple); min-width: 45px;
+        }
+        .agenda-content h3 { margin: 0; font-size: 1rem; }
+        .agenda-content p { margin: 0.15rem 0 0; font-size: 0.8rem; color: var(--stone); }
+        .agenda-item.janos { border-left: 4px solid var(--purple); }
+        .agenda-item.kamill { border-left: 4px solid var(--orange); }
+        .agenda-item.adam { border-left: 4px solid #22c55e; }
+        .agenda-item.mixed { border-left: 4px solid var(--stone); }
+
+        /* Section divider */
+        .section-divider {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        .section-divider .block-number {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 64px; height: 64px; border-radius: 50%;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.8rem; font-weight: 600; margin-bottom: 1.5rem;
+        }
+        .section-divider h2 { margin-bottom: 0.75rem; }
+        .section-divider .speaker-tag {
+            display: inline-block; font-size: 0.9rem;
+            padding: 0.4rem 1.25rem; border-radius: 6px; margin-top: 0.5rem;
+        }
+        .section-divider .section-goal {
+            max-width: 600px; margin: 1.5rem auto 0; font-size: 0.95rem;
+            color: var(--stone); line-height: 1.7;
+        }
+
+        /* Roadmap */
+        .roadmap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 2rem; }
+        .roadmap-column { padding: 1.5rem; border-radius: 8px; }
+        .roadmap-column h4 {
+            font-family: 'DM Mono', monospace; font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+        }
+        .roadmap-column h3 { font-size: 1.1rem; margin-bottom: 1rem; }
+        .roadmap-column ul { list-style: none; font-size: 0.85rem; }
+        .roadmap-column ul li { padding: 0.3rem 0; display: flex; align-items: flex-start; gap: 0.5rem; }
+        .roadmap-column ul li::before { content: "→"; flex-shrink: 0; }
+        .roadmap-column.purple { background: var(--purple); color: white; }
+        .roadmap-column.purple h4 { opacity: 0.7; }
+        .roadmap-column.purple ul li::before { content: "✓"; }
+        .roadmap-column.orange { background: var(--orange); color: white; }
+        .roadmap-column.orange h4 { opacity: 0.7; }
+        .roadmap-column.orange ul li::before { content: "★"; }
+        .roadmap-column.gray { background: var(--card); }
+
+        /* Maturity levels */
+        .maturity-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-top: 2rem; }
+        .maturity-level {
+            padding: 1.25rem; border-radius: 8px; text-align: center; position: relative;
+            transition: transform 0.2s;
+        }
+        .maturity-level:hover { transform: translateY(-4px); }
+        .maturity-level .level-num {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem; font-weight: 600; line-height: 1; margin-bottom: 0.5rem;
+        }
+        .maturity-level h3 { font-size: 0.9rem; margin-bottom: 0.5rem; line-height: 1.3; }
+        .maturity-level p { font-size: 0.7rem; line-height: 1.4; }
+        .maturity-level.current {
+            background: var(--purple); color: white;
+            box-shadow: 0 8px 24px rgba(120, 63, 243, 0.3);
+        }
+        .maturity-level.current h3 { color: white; }
+        .maturity-level.current p { color: rgba(255,255,255,0.9); }
+        .maturity-level.future { background: var(--card); }
+        .maturity-level.far { background: var(--card); opacity: 0.7; }
+        .maturity-arrow {
+            position: absolute; right: -16px; top: 50%; transform: translateY(-50%);
+            font-size: 1.2rem; color: var(--stone); z-index: 1;
+        }
+
+        /* Flow horizontal */
+        .flow-horizontal { display: flex; align-items: stretch; gap: 0; margin-top: 2rem; }
+        .flow-horizontal > div { flex: 1; padding: 1.5rem; }
+        .flow-horizontal > div:first-child { border-radius: 8px 0 0 8px; }
+        .flow-horizontal > div:last-child { border-radius: 0 8px 8px 0; }
+
+        /* Simple table */
+        .simple-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+        .simple-table th { text-align: left; padding: 0.75rem; background: var(--purple); color: white; font-weight: 500; }
+        .simple-table td { padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .simple-table tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+
+        /* Nav */
+        .nav-dots {
+            position: fixed; right: 30px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 10px; z-index: 100;
+        }
+        .nav-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--stone); opacity: 0.3; cursor: pointer; transition: all 0.2s ease;
+        }
+        .nav-dot.active { background: var(--purple); opacity: 1; }
+        .nav-dot.janos-dot.active { background: var(--purple); }
+        .nav-dot.other-dot.active { background: var(--stone); }
+
+        .keyboard-hint {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 0.75rem; color: var(--stone); opacity: 0.5;
+        }
+
+        /* Slide number */
+        .slide-label {
+            position: absolute; top: 30px; right: 60px;
+            font-size: 0.7rem; color: var(--stone); text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Compact */
+        .slide-compact { padding: 40px 60px; justify-content: flex-start; padding-top: 50px; }
+        .slide-compact h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+
+        @media (max-width: 1024px) {
+            .slide { padding: 40px; }
+            h1 { font-size: 2.5rem; }
+            .grid-2, .grid-3, .grid-4, .grid-5, .maturity-grid { grid-template-columns: 1fr; }
+            .roadmap-grid { grid-template-columns: 1fr; }
+            .flow-horizontal { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Protection -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <h2>Belépés</h2>
+            <input type="password" id="passwordInput" placeholder="Jelszó" autofocus>
+            <div class="error" id="passwordError"></div>
+        </div>
+    </div>
+
+    <div class="content-wrapper" id="contentWrapper">
+    <div class="nav-dots" id="navDots"></div>
+    <div class="keyboard-hint">↑↓ vagy scroll a navigációhoz</div>
+
+    <!-- ==========================================
+         SLIDE 1: HERO
+         ========================================== -->
+    <section class="slide hero" id="slide-hero">
+        <div class="hero-logo">
+            <img src="assets/1337 logo.png" alt="1337">
+        </div>
+        <h1>AI <span>Transzformáció</span></h1>
+        <p class="subtitle" style="font-size: 1.3rem; max-width: 800px; margin-bottom: 2rem;">
+            Hogyan gondolkodunk az AI bevezetéséről a Dorsumnál — és miért pont most.
+        </p>
+
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="background: var(--card); padding: 1.25rem 1.5rem; border-radius: 8px;">
+                <div style="font-size: 0.75rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.05em;">Előadók</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem;">
+                    <strong style="color: var(--purple);">János</strong> · management lens &nbsp;
+                    <strong style="color: var(--orange);">Kamill</strong> · világ & tooling &nbsp;
+                    <strong style="color: #22c55e;">Ádám</strong> · tech & Dorsum teams
+                </div>
+            </div>
+            <div style="background: var(--card); padding: 1.25rem 1.5rem; border-radius: 8px;">
+                <div style="font-size: 0.75rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.05em;">Format</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem;">46 perc · 8 blokk · prezentáció + demó</div>
+            </div>
+        </div>
+
+        <div class="hero-meta">
+            2026. március 6. | Management Nap · Dorsum × 1337
+        </div>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 2: AGENDA
+         ========================================== -->
+    <section class="slide" id="slide-agenda">
+        <span class="badge filled">Menetrend</span>
+        <h2>46 perc — 8 blokk</h2>
+        <p class="subtitle" style="margin-bottom: 1.5rem;">
+            Inspiráció, kontextus, bizonyíték, keret, és a következő lépések.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div>
+                <div class="agenda-item janos">
+                    <div class="agenda-time">3'</div>
+                    <div class="agenda-content">
+                        <h3>1. Opening: Valami megváltozott</h3>
+                        <p><strong style="color: var(--purple);">János</strong> — Kontextus teremtés</p>
+                    </div>
+                </div>
+                <div class="agenda-item kamill">
+                    <div class="agenda-time" style="color: var(--orange);">8'</div>
+                    <div class="agenda-content">
+                        <h3>2. A világ mozog</h3>
+                        <p><strong style="color: var(--orange);">Kamill</strong> — Nemzetközi trendek, saját story</p>
+                    </div>
+                </div>
+                <div class="agenda-item mixed">
+                    <div class="agenda-time" style="color: var(--stone-dark);">10'</div>
+                    <div class="agenda-content">
+                        <h3>3. Fogalmi tisztázás + demó</h3>
+                        <p><strong style="color: var(--orange);">Kamill</strong> + <strong style="color: #22c55e;">Ádám</strong> — Agentic coding, wow faktor</p>
+                    </div>
+                </div>
+                <div class="agenda-item adam">
+                    <div class="agenda-time" style="color: #22c55e;">5'</div>
+                    <div class="agenda-content">
+                        <h3>4. Amit a csapatoknál láttunk</h3>
+                        <p><strong style="color: #22c55e;">Ádám</strong> — Workshop tapasztalatok, proof</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="agenda-item janos">
+                    <div class="agenda-time">5'</div>
+                    <div class="agenda-content">
+                        <h3>5. Érettségi keret</h3>
+                        <p><strong style="color: var(--purple);">János</strong> — Hogyan gondolkodjunk a journey-ről</p>
+                    </div>
+                </div>
+                <div class="agenda-item kamill">
+                    <div class="agenda-time" style="color: var(--orange);">5'</div>
+                    <div class="agenda-content">
+                        <h3>6. Szervezet, streamek</h3>
+                        <p><strong style="color: var(--orange);">Kamill</strong> — Konkrétumok, power userek</p>
+                    </div>
+                </div>
+                <div class="agenda-item mixed">
+                    <div class="agenda-time" style="color: var(--stone-dark);">5'</div>
+                    <div class="agenda-content">
+                        <h3>8. Tooling demó</h3>
+                        <p><strong style="color: #22c55e;">Ádám</strong> + <strong style="color: var(--orange);">Kamill</strong> — Élő eszköz bemutatás</p>
+                    </div>
+                </div>
+                <div class="agenda-item janos">
+                    <div class="agenda-time">5'</div>
+                    <div class="agenda-content">
+                        <h3>9. Hogyan tovább + mérhetőség</h3>
+                        <p><strong style="color: var(--purple);">János</strong> — EBITDA, menetrend, zárás</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; padding: 0.75rem 1rem; background: rgba(120, 63, 243, 0.08); border-radius: 8px; text-align: center;">
+                    <span style="font-size: 0.85rem; color: var(--stone-dark);">
+                        <strong style="color: var(--purple);">János</strong> 18' &nbsp;·&nbsp;
+                        <strong style="color: var(--orange);">Kamill</strong> 18' &nbsp;·&nbsp;
+                        <strong style="color: #22c55e;">Ádám</strong> 10'
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 3: OPENING — VALAMI MEGVÁLTOZOTT
+         János, 3'
+         ========================================== -->
+    <section class="slide" id="slide-opening">
+        <div class="slide-label">1/8 · János · 3'</div>
+        <span class="badge filled">Opening</span>
+        <h1 style="font-size: 3rem;">Valami <span style="color: var(--purple);">megváltozott</span></h1>
+        <p class="subtitle" style="font-size: 1.15rem; max-width: 750px; margin-bottom: 2.5rem;">
+            Nem a Dorsum problémája — a technológia elért egy pontot, ahol másképp kell gondolkodni a szoftverfejlesztésről, a szervezetről, és a versenyképességről.
+        </p>
+
+        <div class="grid-3">
+            <div class="card" style="border-top: 4px solid var(--purple);">
+                <h3 style="color: var(--purple); font-size: 1rem;">Inflexiós pont</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    Ez nem jövőbeli ígéret. Az AI kódoló agentek <strong>ma production-ben futnak</strong> a világ legnagyobb bankjainál és fintechjeinél.
+                </p>
+            </div>
+            <div class="card" style="border-top: 4px solid var(--orange);">
+                <h3 style="color: var(--orange); font-size: 1rem;">A csapatok készek</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    Két workshop kör megtörtént. A fejlesztőitekben <strong>megvan az appetite</strong> — nyitottak, izgatottak, és már pilot projekteket futtatnak.
+                </p>
+            </div>
+            <div class="card purple">
+                <h3 style="color: white; font-size: 1rem;">Ma arról beszélünk</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    Mit látunk a világban. Mit láttunk nálatok. És hogyan lehet ebből <strong>mérhető üzleti eredmény</strong> — lépésről lépésre.
+                </p>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding: 0.75rem 1.25rem; background: rgba(0,0,0,0.03); border-radius: 8px; font-size: 0.9rem; color: var(--stone-dark);">
+            <strong style="color: var(--text);">Fontos:</strong> Ez nem csak az IT-fejlesztésről szól. Az AI <strong>minden szervezeti egységet érint</strong> — managementet, tanácsadást, sales-t. A <strong>core-ral kezdünk</strong>, mert ott a legnagyobb lever — de a teljes szervezetre gondolunk.
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 4: SECTION DIVIDER — A világ mozog
+         Kamill, 8'
+         ========================================== -->
+    <section class="slide section-divider" id="slide-s2">
+        <div class="slide-label">2/8 · Kamill · 8'</div>
+        <div class="block-number" style="background: var(--orange); color: white;">2</div>
+        <h2>A világ mozog</h2>
+        <div class="speaker-tag" style="background: var(--orange); color: white;">Kamill · 8 perc</div>
+        <p class="section-goal">
+            Block, Goldman Sachs, Wise — mi történt az elmúlt hónapokban.<br>
+            Kamill saját story: designer és productos is kódol.
+        </p>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 5: SECTION DIVIDER — Fogalmi tisztázás
+         Kamill + Ádám, 10'
+         ========================================== -->
+    <section class="slide section-divider" id="slide-s3">
+        <div class="slide-label">3/8 · Kamill + Ádám · 10'</div>
+        <div class="block-number" style="background: var(--stone-dark); color: white;">3</div>
+        <h2>Fogalmi tisztázás + demó</h2>
+        <div>
+            <span class="speaker-tag" style="background: var(--orange); color: white;">Kamill</span>
+            <span style="margin: 0 0.5rem; color: var(--stone);">+</span>
+            <span class="speaker-tag" style="background: #22c55e; color: white;">Ádám</span>
+            <span style="margin-left: 0.75rem; font-size: 0.85rem; color: var(--stone);">10 perc</span>
+        </div>
+        <p class="section-goal">
+            Tool → Assistant → Agent evolúció. Agentic coding dedikáltan.<br>
+            Mire jó és mire nem. Wow faktor, de reálisan. Kontextus fontossága.
+        </p>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 6: SECTION DIVIDER — Amit a csapatoknál láttunk
+         Ádám, 5'
+         ========================================== -->
+    <section class="slide section-divider" id="slide-s4">
+        <div class="slide-label">4/8 · Ádám · 5'</div>
+        <div class="block-number" style="background: #22c55e; color: white;">4</div>
+        <h2>Amit a csapatoknál láttunk</h2>
+        <div class="speaker-tag" style="background: #22c55e; color: white;">Ádám · 5 perc</div>
+        <p class="section-goal">
+            Workshop tapasztalatok, Peti sztori, konkrét use case-ek.<br>
+            <em>„A fejlesztőitek készek. Nyitottak. Izgatottak."</em>
+        </p>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 7a: MIÉRT PONT MOST — Dorsum üzleti modell
+         János, 5' (érettségi blokk része)
+         ========================================== -->
+    <section class="slide" id="slide-dorsum-pressure">
+        <div class="slide-label">5/8 · János · Érettségi keret</div>
+        <span class="badge filled">Miért pont most?</span>
+        <h2>Ami a Dorsum üzleti modelljét <br>közvetlenül érinti</h2>
+        <p class="subtitle" style="margin-bottom: 0.5rem;">
+            Ez nem absztrakt trend — 4 konkrét erő, ami ma hat rátok.
+        </p>
+
+        <div class="grid-2" style="margin-top: 1.5rem; gap: 1.5rem;">
+            <!-- 1. Talent drain -->
+            <div class="card" style="border-left: 4px solid var(--purple); padding: 1.25rem;">
+                <h3 style="color: var(--purple); font-size: 1rem; margin-bottom: 0.5rem;">Tehetség-drain</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    A legjobb fejlesztőiteket elszívják azok a cégek, amelyek <strong>AI-native-ként dolgoznak</strong>.
+                    A top talent oda megy, ahol modern eszközökkel, gyorsabban, érdekesebb feladatokon dolgozhat.
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--purple); font-weight: 500;">
+                    → Aki nem ad AI eszközöket, elveszíti a high agency embereit
+                </div>
+            </div>
+
+            <!-- 2. Ár-nyomás -->
+            <div class="card" style="border-left: 4px solid var(--orange); padding: 1.25rem;">
+                <h3 style="color: var(--orange); font-size: 1rem; margin-bottom: 0.5rem;">Versenytársi ár-nyomás</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    A Temenos, Avaloq, Backbase-szintű versenytársak <strong>AI-val 3-4x olcsóbban fejlesztenek</strong>.
+                    A „Software-mageddon" ($1.2T piaci értékvesztés) azt mutatja: a hagyományos szoftver moat eltűnik.
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--orange); font-weight: 500;">
+                    → Ugyanaz a development olcsóbban megcsinálható — aki nem lép, kiszorul
+                </div>
+            </div>
+
+            <!-- 3. Ügyfél-elvárás -->
+            <div class="card" style="border-left: 4px solid var(--purple); padding: 1.25rem;">
+                <h3 style="color: var(--purple); font-size: 1rem; margin-bottom: 0.5rem;">Ügyfél-elvárás</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    Az OTP, Erste, Raiffeisen látják, mit csinál Morgan Stanley (AI @ MS) és Goldman.
+                    <strong>El fogják várni:</strong> self-service advisory, AI chatbot, személyre szabott portfolio insights — a Dorsum termékében.
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; color: var(--purple); font-weight: 500;">
+                    → 2027-re az AI features alapelvárás lesz, nem differenciátor
+                </div>
+            </div>
+
+            <!-- 4. Kapacitás-csapda -->
+            <div class="card purple" style="padding: 1.25rem;">
+                <h3 style="color: white; font-size: 1rem; margin-bottom: 0.5rem;">Kapacitás-csapda</h3>
+                <p style="font-size: 0.9rem; line-height: 1.6;">
+                    A <strong>Next platform el van adva</strong>. Nincs elég ember megépíteni on time, on budget.
+                    AI = kapacitás multiplikátor — nem headcount csökkentő, hanem <strong>az egyetlen reális módja, hogy a meglévő emberekkel több legyen kész.</strong>
+                </p>
+                <div style="margin-top: 0.75rem; font-size: 0.8rem; opacity: 0.85; font-weight: 500;">
+                    → Ez nem „nice to have" — ez a Next delivery feltétele
+                </div>
+            </div>
+        </div>
+
+        <div class="decision-box" style="margin-top: 1.25rem;">
+            <h4>Kulcsüzenet</h4>
+            <p><em>„Aki nem lép, annak nem 'csak' elmarad a hatékonyság. Elveszíti az embereit, a piaci pozícióját, és az ügyfelei bizalmát. De aki most lép — annak versenyelőnye lesz."</em></p>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 7b: ÉRETTSÉGI KERET — vizuális
+         János, 5'
+         ========================================== -->
+    <section class="slide slide-compact" id="slide-maturity">
+        <div class="slide-label">5/8 · János · 5'</div>
+        <span class="badge filled">Érettségi keret</span>
+        <h2>Hogyan gondolkodjunk a journey-ről?</h2>
+        <p class="subtitle" style="margin-bottom: 0.5rem;">
+            Nem diagnózis — vízió. 5 szint, amiken végig kell menni. A Dorsum most az első szinten van, és ez teljesen rendben van.
+        </p>
+
+        <div class="maturity-grid">
+            <!-- Level 1 - CURRENT -->
+            <div class="maturity-level current">
+                <div class="level-num">1</div>
+                <h3>Tapasztalat-<br>szerzés</h3>
+                <p>Egyéni AI használat, workshopok, power user azonosítás</p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    Dorsum ma
+                </div>
+                <div class="maturity-arrow">›</div>
+            </div>
+            <!-- Level 2 -->
+            <div class="maturity-level future" style="border-top: 3px solid var(--purple);">
+                <div class="level-num" style="color: var(--purple);">2</div>
+                <h3>Csapat<br>hatékonyság</h3>
+                <p>Power userek aktívak, csapatonként mérhető gyorsulás</p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08); font-size: 0.65rem; color: var(--purple); font-weight: 500;">
+                    20-40% gyorsulás
+                </div>
+                <div class="maturity-arrow">›</div>
+            </div>
+            <!-- Level 3 -->
+            <div class="maturity-level future" style="border-top: 3px solid var(--orange);">
+                <div class="level-num" style="color: var(--orange);">3</div>
+                <h3>Szervezeti<br>hatékonyság</h3>
+                <p>Cross-team tudásmegosztás, way of working transzformáció</p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08); font-size: 0.65rem; color: var(--orange); font-weight: 500;">
+                    Mérhető EBITDA hatás
+                </div>
+                <div class="maturity-arrow">›</div>
+            </div>
+            <!-- Level 4 -->
+            <div class="maturity-level far">
+                <div class="level-num" style="color: var(--stone);">4</div>
+                <h3>Termékbe<br>épül</h3>
+                <p>AI features a Next platformban, gyorsabb delivery → bevétel</p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08); font-size: 0.65rem; color: var(--stone); font-weight: 500;">
+                    Revenue hatás
+                </div>
+                <div class="maturity-arrow">›</div>
+            </div>
+            <!-- Level 5 -->
+            <div class="maturity-level far">
+                <div class="level-num" style="color: var(--stone);">5</div>
+                <h3>AI-native<br>szervezet</h3>
+                <p>Sales, consulting AI-augmented, új üzleti modellek</p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08); font-size: 0.65rem; color: var(--stone); font-weight: 500;">
+                    Teljes transzformáció
+                </div>
+            </div>
+        </div>
+
+        <!-- Journey arrow -->
+        <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="flex: 1; height: 4px; background: linear-gradient(90deg, var(--purple) 0%, var(--purple) 20%, var(--card) 20%, var(--card) 100%); border-radius: 2px;"></div>
+        </div>
+
+        <div class="decision-box" style="margin-top: 1.25rem;">
+            <h4>Kulcsüzenet</h4>
+            <p><em>„Ti most Level 1-en vagytok, és ez rendben van. A kérdés: milyen gyorsan tudtok Level 2-3-ra jutni. Mi abban segítünk, hogy ez a journey gyors és mérhető legyen."</em></p>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 7d: ÉRETTSÉGI RÉSZLETEK — timeline + org impact
+         János, 5' (érettségi blokk része)
+         ========================================== -->
+    <section class="slide slide-compact" id="slide-maturity-detail">
+        <div class="slide-label">5/8 · János · Érettségi keret</div>
+        <span class="badge filled">Érettségi keret — részletek</span>
+        <h2>Konkrétan mit, mikor, milyen szervezeti hatással</h2>
+
+        <table class="simple-table" style="margin-top: 1rem; font-size: 0.75rem;">
+            <tr>
+                <th style="width: 10%; padding: 0.5rem;">Szint</th>
+                <th style="width: 14%; padding: 0.5rem;">Dorsum idővonal</th>
+                <th style="width: 30%; padding: 0.5rem;">Mit csinálunk</th>
+                <th style="width: 26%; padding: 0.5rem;">Szervezeti hatás</th>
+                <th style="width: 20%; padding: 0.5rem;">EBITDA hatás</th>
+            </tr>
+            <tr style="background: rgba(120, 63, 243, 0.08);">
+                <td style="padding: 0.5rem;"><strong style="color: var(--purple);">1</strong></td>
+                <td style="padding: 0.5rem;"><strong style="color: var(--purple);">2026 Q1</strong><br><span style="font-size: 0.65rem; color: var(--orange);">← Dorsum ma</span></td>
+                <td style="padding: 0.5rem;">
+                    Workshopok, tool kiválasztás, <strong>power user azonosítás</strong>, első pilot projektek, tudásépítés
+                </td>
+                <td style="padding: 0.5rem;">
+                    Egyéni szint — nincs szervezeti változás. <strong>A high agency emberek kiemelkednek</strong> és láthatóvá válnak.
+                </td>
+                <td style="padding: 0.5rem;">Közvetett — egyéni idő megtakarítás</td>
+            </tr>
+            <tr>
+                <td style="padding: 0.5rem;"><strong style="color: var(--purple);">2</strong></td>
+                <td style="padding: 0.5rem;"><strong>2026 Q2-Q3</strong></td>
+                <td style="padding: 0.5rem;">
+                    Power userek aktívak, <strong>csapatonként mérhető 20-40% gyorsulás</strong>, tooling standardizálás, use case library, heti coaching
+                </td>
+                <td style="padding: 0.5rem;">
+                    Csapaton belüli differenciálódás. <strong>Aki nem alkalmazkodik, lemarad.</strong> Power userek mentorálnak.
+                </td>
+                <td style="padding: 0.5rem;"><strong>20-40%</strong> feladat gyorsulás kiválasztott területeken</td>
+            </tr>
+            <tr style="background: rgba(250, 126, 0, 0.06);">
+                <td style="padding: 0.5rem;"><strong style="color: var(--orange);">3</strong></td>
+                <td style="padding: 0.5rem;"><strong>2026 Q4 — 2027 Q1</strong></td>
+                <td style="padding: 0.5rem;">
+                    Cross-team tudásmegosztás, way of working transzformáció, <strong>szerepkörök elmosódnak</strong> (dev/BA/tesztelő határ)
+                </td>
+                <td style="padding: 0.5rem;">
+                    <strong style="color: var(--orange);">Csapatok átméretezése.</strong> Kevesebb ember, nagyobb output. 10 fős csapat → 6-7 fős <strong>high agency csapat</strong>. Minőségi cserék.
+                </td>
+                <td style="padding: 0.5rem;"><strong>Mérhető EBITDA</strong> — kapacitás felszabadulás, delivery gyorsulás</td>
+            </tr>
+            <tr>
+                <td style="padding: 0.5rem;"><strong>4</strong></td>
+                <td style="padding: 0.5rem;">2027</td>
+                <td style="padding: 0.5rem;">
+                    AI features a <strong>Next platformban</strong> — ügyfél-facing AI (advisory chatbot, portfolio insights, self-service), gyorsabb release ciklusok
+                </td>
+                <td style="padding: 0.5rem;">
+                    Új szerepkörök jelennek meg. AI product thinking beépül a BA munkába. A fejlesztő „AI reviewer"-ré válik.
+                </td>
+                <td style="padding: 0.5rem;"><strong>Revenue hatás</strong> — gyorsabb piacra kerülés, premium features</td>
+            </tr>
+            <tr style="opacity: 0.7;">
+                <td style="padding: 0.5rem;"><strong>5</strong></td>
+                <td style="padding: 0.5rem;">2027+</td>
+                <td style="padding: 0.5rem;">
+                    Sales, consulting AI-augmented. Bálint-track: AI-val támogatott értékesítés. Új üzleti modellek.
+                </td>
+                <td style="padding: 0.5rem;">
+                    Teljes szervezeti áttervezés. AI nem eszköz, hanem <strong>a működés alapja</strong>.
+                </td>
+                <td style="padding: 0.5rem;">Versenyképesség — teljes transzformáció</td>
+            </tr>
+        </table>
+
+        <!-- Key org impact callout -->
+        <div style="margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="padding: 1rem; background: rgba(120, 63, 243, 0.08); border-left: 4px solid var(--purple); border-radius: 0 8px 8px 0;">
+                <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); margin-bottom: 0.4rem;">Szervezeti fordulópont: Level 3</h4>
+                <p style="font-size: 0.8rem; color: var(--stone-dark); line-height: 1.5;">
+                    Level 3-nál a csapatok természetesen kisebbek és erősebbek lesznek. <strong>Nem leépítés — átrendeződés.</strong>
+                    A high agency emberek vezetik a változást. Aki nem vesz részt, az nem tud lépést tartani.
+                </p>
+            </div>
+            <div style="padding: 1rem; background: rgba(250, 126, 0, 0.08); border-left: 4px solid var(--orange); border-radius: 0 8px 8px 0;">
+                <h4 style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--orange); margin-bottom: 0.4rem;">Ügyfél-fordulópont: Level 4</h4>
+                <p style="font-size: 0.8rem; color: var(--stone-dark); line-height: 1.5;">
+                    Level 4-nél az ügyfelek (OTP, Erste, Raiffeisen) AI-t <strong>a Dorsum termékében várják el</strong>:
+                    self-service advisory, AI-driven portfolio insights, automatizált compliance.
+                </p>
+            </div>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 8: SECTION DIVIDER — Szervezet, streamek
+         Kamill, 5'
+         ========================================== -->
+    <section class="slide section-divider" id="slide-s6">
+        <div class="slide-label">6/8 · Kamill · 5'</div>
+        <div class="block-number" style="background: var(--orange); color: white;">6</div>
+        <h2>Szervezet, streamek, Miro</h2>
+        <div class="speaker-tag" style="background: var(--orange); color: white;">Kamill · 5 perc</div>
+        <p class="section-goal">
+            7 csapat, 4 területvezető, power user koncepció.<br>
+            Bálint track: sales & consulting AI. Management: leading by example.
+        </p>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 9: SECTION DIVIDER — Tooling demó
+         Ádám + Kamill, 5'
+         ========================================== -->
+    <section class="slide section-divider" id="slide-s8">
+        <div class="slide-label">8/8 · Ádám + Kamill · 5'</div>
+        <div class="block-number" style="background: var(--stone-dark); color: white;">8</div>
+        <h2>Tooling demó</h2>
+        <div>
+            <span class="speaker-tag" style="background: #22c55e; color: white;">Ádám</span>
+            <span style="margin: 0 0.5rem; color: var(--stone);">+</span>
+            <span class="speaker-tag" style="background: var(--orange); color: white;">Kamill</span>
+            <span style="margin-left: 0.75rem; font-size: 0.85rem; color: var(--stone);">5 perc</span>
+        </div>
+        <p class="section-goal">
+            Codex, Claude Code, terminal vs. GUI. Élő demó.<br>
+            Enterprise szint: biztonság, data sovereignty. Design Partner framing.
+        </p>
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 10: MÉRHETŐSÉG — Dorsum specifikus
+         János, 5'
+         ========================================== -->
+    <section class="slide slide-compact" id="slide-metrics">
+        <div class="slide-label">9/8 · János · 5'</div>
+        <span class="badge filled">Mérhetőség</span>
+        <h2>Mindent az EBITDA-ban mérünk — konkrétan</h2>
+        <p class="subtitle" style="margin-bottom: 0.25rem;">
+            Nem absztrakt metrikákat nézünk. Három szinten mérünk, mindegyik közvetlenül hat az eredményre.
+        </p>
+
+        <div class="grid-3" style="margin-top: 1rem; gap: 1.25rem;">
+            <!-- 1. Projekt-szintű -->
+            <div class="card purple" style="padding: 1.25rem;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-bottom: 0.5rem;">Szint 1</div>
+                <h3 style="color: white; font-size: 1.05rem; margin-bottom: 0.75rem;">Projekt-szintű mérés</h3>
+                <p style="font-size: 0.85rem; line-height: 1.6;">
+                    Adott projekten vannak <strong>sprintek, batch-ek</strong>. Mérjük: mennyi a tényleges delivery javulás?
+                    Ami eddig 2 sprint volt, most 1.5 — <strong>és mit nyertél rajta?</strong>
+                </p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.8rem;">
+                    <strong>Példa:</strong> Next feature: 10 sprint → 7 sprint = 30% gyorsabb. Az a 3 sprint kapacitás felszabadul.
+                </div>
+            </div>
+
+            <!-- 2. Portfólió-szintű -->
+            <div class="card orange" style="padding: 1.25rem;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-bottom: 0.5rem;">Szint 2</div>
+                <h3 style="color: white; font-size: 1.05rem; margin-bottom: 0.75rem;">Portfólió-szintű mérés</h3>
+                <p style="font-size: 0.85rem; line-height: 1.6;">
+                    Hány projektet tudtál eddig leszállítani évente — és <strong>hányat akarsz most?</strong>
+                    Ha 20%-kal gyorsabb a delivery, az éves szinten nem 1, hanem +X projekt.
+                </p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.8rem;">
+                    <strong>Példa:</strong> Ha évi 12 release → évi 15-16 release, az 30% több delivered value, ugyanazzal a csapattal.
+                </div>
+            </div>
+
+            <!-- 3. Szervezeti / FTE -->
+            <div class="card bordered" style="padding: 1.25rem; border-color: var(--purple);">
+                <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); margin-bottom: 0.5rem;">Szint 3</div>
+                <h3 style="color: var(--purple); font-size: 1.05rem; margin-bottom: 0.75rem;">Szervezeti / FTE mérés</h3>
+                <p style="font-size: 0.85rem; line-height: 1.6;">
+                    Adott folyamat, backoffice, support: <strong>X ember, X FTE, Y költség.</strong>
+                    Ha kevesebb FTE-vel megoldható → direkt cost saving, vagy átcsoportosítás magasabb értékű munkára.
+                </p>
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(0,0,0,0.08); font-size: 0.8rem; color: var(--stone-dark);">
+                    <strong>Példa:</strong> 10 fős csapat → 7 fős high agency csapat, ugyanaz az output. 3 FTE reallokálható.
+                </div>
+            </div>
+        </div>
+
+        <!-- International references - compact -->
+        <div style="margin-top: 1rem; display: flex; gap: 1.5rem; align-items: center; padding: 0.75rem 1rem; background: rgba(0,0,0,0.02); border-radius: 8px;">
+            <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--stone); white-space: nowrap;">Referenciák:</span>
+            <span style="font-size: 0.8rem; color: var(--stone-dark);">
+                Goldman Sachs <strong style="color: var(--purple);">40%</strong> delivery gyorsulás &nbsp;·&nbsp;
+                Copilot/McKinsey <strong style="color: var(--purple);">56%</strong> gyorsabb fejlesztés &nbsp;·&nbsp;
+                Magas adoption <strong style="color: var(--purple);">110%+</strong> produktivitásnövekedés
+            </span>
+        </div>
+
+        <div class="decision-box" style="margin-top: 0.75rem;">
+            <h4>A mérés a Dorsum felelőssége — 1337 supporttal</h4>
+            <p>Közösen definiáljuk a baseline-t, utána a Dorsum méri. Mi adunk keretet, módszertant, és segítünk értelmezni.</p>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 10b: INVESTÍCIÓ ÉS TOKEN KÖLTSÉG
+         János, 5' (mérhetőség része)
+         ========================================== -->
+    <section class="slide" id="slide-investment">
+        <div class="slide-label">9/8 · János · Mérhetőség</div>
+        <span class="badge filled">Investíció és megtérülés</span>
+        <h2>Nem ingyen van — de megéri</h2>
+        <p class="subtitle" style="margin-bottom: 1.5rem;">
+            Egy folyamat kiváltása nem „bekapcsoltam az AI-t és kész". Investálni kell — de a megtérülés mérhető.
+        </p>
+
+        <!-- Investment flow -->
+        <div class="flow-horizontal">
+            <div style="background: var(--purple); color: white; text-align: center;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; opacity: 0.7;">1. CAPEX fázis</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem; font-weight: 600;">Felmérés & építés</div>
+                <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.9;">
+                    Folyamat felmérés<br>
+                    Új folyamat tervezés<br>
+                    Betanítás, rendszerépítés
+                </div>
+            </div>
+            <div style="background: var(--card); text-align: center;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--stone);">2. Ongoing cost</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem; font-weight: 600; color: var(--text);">Token költség</div>
+                <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--stone-dark);">
+                    Az AI futtatásának költsége<br>
+                    Skálázódik a használattal<br>
+                    <strong>Előbb-utóbb látható tétel</strong>
+                </div>
+            </div>
+            <div style="background: var(--card); text-align: center;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--stone);">3. Savings</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem; font-weight: 600; color: var(--text);">Megtakarítás</div>
+                <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--stone-dark);">
+                    FTE reallokáció<br>
+                    Gyorsabb delivery<br>
+                    Több projekt kapacitás
+                </div>
+            </div>
+            <div style="background: var(--orange); color: white; text-align: center;">
+                <div style="font-size: 0.65rem; text-transform: uppercase; opacity: 0.7;">Eredmény</div>
+                <div style="font-size: 1rem; margin-top: 0.5rem; font-weight: 600;">ROI</div>
+                <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.9;">
+                    „Megnőtt a token költségem —<br>
+                    <strong>de mit spóroltam<br>és hogyan?"</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-world cost data -->
+        <div style="margin-top: 1.5rem;">
+            <h3 style="font-size: 1rem; color: var(--purple); margin-bottom: 0.75rem;">Mit költenek ma a legjobbak? — Valós adatok</h3>
+            <div class="grid-3" style="margin-top: 0; gap: 1rem;">
+                <div class="card" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--stone); margin-bottom: 0.25rem;">Átlag fejlesztő / hó</div>
+                    <div class="big-number" style="font-size: 2.2rem;">$180</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.25rem;">Claude Code API, ~$6/nap<br><span style="color: var(--stone);">Anthropic saját adat</span></p>
+                </div>
+                <div class="card" style="padding: 1rem; text-align: center; border: 2px solid var(--orange);">
+                    <div style="font-size: 0.65rem; text-transform: uppercase; color: var(--orange); margin-bottom: 0.25rem;">Heavy user / hó</div>
+                    <div class="big-number" style="font-size: 2.2rem; color: var(--orange);">$2-4K</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.25rem;">Power userek API költsége<br><span style="color: var(--stone);">Valós invoice: $3,731/hó</span></p>
+                </div>
+                <div class="card purple" style="padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.65rem; text-transform: uppercase; opacity: 0.7; margin-bottom: 0.25rem;">Vállalati benchmark / fő / év</div>
+                    <div class="big-number" style="font-size: 2.2rem;">$1-3K</div>
+                    <p style="font-size: 0.75rem; margin-top: 0.25rem;">2026-os target benchmark<br><span style="opacity: 0.8;">275 eng. leader felmérés (DX)</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token cost vision + Dorsum context -->
+        <div class="grid-2" style="margin-top: 1.25rem; gap: 1rem;">
+            <div class="card" style="border-left: 4px solid var(--purple); padding: 1rem;">
+                <h3 style="color: var(--purple); font-size: 0.9rem; margin-bottom: 0.5rem;">Az investíció logikája</h3>
+                <p style="font-size: 0.8rem; line-height: 1.5; color: var(--stone-dark);">
+                    Egy folyamat kiváltása nem „bekapcsoltam az AI-t". Van egy <strong>CAPEX fázis</strong>
+                    (felmérés, új folyamat, betanítás, rendszerépítés), utána <strong>ongoing token költség</strong>.
+                    A legjobb IT cégeknél a fejlesztők havi $2,000-4,000-et költenek tokenekre —
+                    és <strong>$3.70-at kapnak vissza minden elköltött $1-ért</strong>, a top performerek $10.30-at.
+                </p>
+            </div>
+            <div class="card" style="border-left: 4px solid var(--orange); padding: 1rem;">
+                <h3 style="color: var(--orange); font-size: 0.9rem; margin-bottom: 0.5rem;">Mit jelent ez a Dorsumnak?</h3>
+                <ul style="font-size: 0.8rem; list-style: none;">
+                    <li style="padding: 0.25rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        → <strong>Ma:</strong> $500-1,000/fő/év — tool licenszek + token
+                    </li>
+                    <li style="padding: 0.25rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        → <strong>12 hónapon belül:</strong> $1,000-3,000/fő/év — ahogy az adoption nő
+                    </li>
+                    <li style="padding: 0.25rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
+                        → <strong>24+ hónap:</strong> Az éves bér 10-20%-a — de a megtakarítás ennek többszöröse
+                    </li>
+                    <li style="padding: 0.25rem 0;">
+                        → <strong>A kérdés:</strong> „Megnőtt a token költségem — <strong>mit spóroltam és hogyan?</strong>"
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 11: HOGYAN TOVÁBB — MENETREND
+         János (cont.)
+         ========================================== -->
+    <section class="slide" id="slide-roadmap">
+        <span class="badge filled">Hogyan tovább</span>
+        <h2>Menetrend</h2>
+        <p class="subtitle">2026. március — június</p>
+
+        <div class="roadmap-grid">
+            <div class="roadmap-column purple">
+                <h4>Jövő hét</h4>
+                <h3>Indulás</h3>
+                <ul>
+                    <li>Ajánlat véglegesítés</li>
+                    <li>2-3 részre bontva</li>
+                </ul>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.85rem;">
+                    <strong>Ádám indul:</strong> sessions, oktatás
+                </div>
+            </div>
+
+            <div class="roadmap-column gray">
+                <h4>Március</h4>
+                <h3>Setup</h3>
+                <ul>
+                    <li>Program indítás</li>
+                    <li>Power user kiválasztás</li>
+                    <li>Management workshop</li>
+                    <li>KPI-ok véglegesítése</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-column gray">
+                <h4>Április — Május</h4>
+                <h3>Futtatás</h3>
+                <ul>
+                    <li>Heti syncek, coaching</li>
+                    <li>Adoption tracking</li>
+                    <li>Knowledge sharing</li>
+                    <li>Management involvement</li>
+                </ul>
+            </div>
+
+            <div class="roadmap-column orange">
+                <h4>Június</h4>
+                <h3>Review</h3>
+                <ul>
+                    <li>Outcome review</li>
+                    <li>ROI mérés</li>
+                    <li>Handover</li>
+                </ul>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.85rem;">
+                    → Folytatásról döntés
+                </div>
+            </div>
+        </div>
+
+        <div class="decision-box">
+            <h4>Design Partner</h4>
+            <p><em>„Nem vendor-client kapcsolat — hanem együtt építjük. A Dorsum az első design partnerünk. Nem egy nagy bang, hanem lépésről lépésre, együtt."</em></p>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
+         SLIDE 12: ZÁRÁS
+         János
+         ========================================== -->
+    <section class="slide" id="slide-closing" style="background: var(--purple); color: white;">
+        <span class="badge" style="background: white; color: var(--purple); border: none;">Zárás</span>
+
+        <h1 style="color: white; font-size: 2.8rem; max-width: 800px; line-height: 1.2;">
+            A technológia kész.<br>
+            A csapataitok készek.<br>
+            <span style="opacity: 0.7;">Most indulunk.</span>
+        </h1>
+
+        <div style="margin-top: 3rem; display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 8px;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; letter-spacing: 0.05em;">Következő lépés</div>
+                <div style="font-size: 1.1rem; margin-top: 0.5rem;">
+                    Ajánlat jövő héten · Ádám indul · Együtt építjük
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <div style="font-size: 0.9rem; opacity: 0.8;">
+                Kérdések?
+            </div>
+            <div style="margin-top: 1.5rem; font-size: 0.9rem; opacity: 0.6;">
+                janos@1337.partners · adam@1337.partners · kamill@1337.partners
+            </div>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company" style="filter: brightness(0) invert(1); opacity: 0.4;"></div>
+    </section>
+
+    </div><!-- /content-wrapper -->
+
+    <script>
+        // Password protection
+        const correctPassword = '1337';
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordOverlay = document.getElementById('passwordOverlay');
+        const contentWrapper = document.getElementById('contentWrapper');
+        const passwordError = document.getElementById('passwordError');
+
+        if (sessionStorage.getItem('mgmt-auth') === 'true') {
+            passwordOverlay.classList.add('hidden');
+            contentWrapper.classList.add('visible');
+        }
+
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                if (passwordInput.value === correctPassword) {
+                    sessionStorage.setItem('mgmt-auth', 'true');
+                    passwordOverlay.classList.add('hidden');
+                    contentWrapper.classList.add('visible');
+                } else {
+                    passwordError.textContent = 'Hibás jelszó';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // Navigation dots
+        const slides = document.querySelectorAll('.slide');
+        const navDots = document.getElementById('navDots');
+
+        slides.forEach((slide, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.addEventListener('click', () => {
+                slide.scrollIntoView({ behavior: 'smooth' });
+            });
+            navDots.appendChild(dot);
+        });
+
+        // Update active dot on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Array.from(slides).indexOf(entry.target);
+                    document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                        dot.classList.toggle('active', i === index);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        slides.forEach(slide => observer.observe(slide));
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const current = Array.from(slides).findIndex(slide => {
+                const rect = slide.getBoundingClientRect();
+                return rect.top >= -100 && rect.top <= 100;
+            });
+
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                e.preventDefault();
+                if (current < slides.length - 1) {
+                    slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                if (current > 0) {
+                    slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
