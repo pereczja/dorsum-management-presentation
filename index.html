@@ -742,6 +742,101 @@
     </section>
 
     <!-- ==========================================
+         SLIDE 7e: ÉRETTSÉGI KERET — ÖSSZEVONT VERZIÓ (v2)
+         János, 5' — ez az 1 diás verzió tesztelésre
+         ========================================== -->
+    <section class="slide slide-compact" id="slide-maturity-v2">
+        <div class="slide-label">5/8 · János · 5' · ⚡ ÖSSZEVONT VERZIÓ</div>
+        <span class="badge filled">Érettségi keret</span>
+        <h2>A journey — és a célállapot</h2>
+        <p class="subtitle" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+            Az 1→2→3 a meglévő működés fokozatos upgrade-je. A 4-es párhuzamosan futhat. Az 5-ös egy teljesen más működési modell.
+        </p>
+
+        <!-- 5-column maturity visual -->
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-top: 1rem;">
+            <!-- Level 1 - CURRENT -->
+            <div style="padding: 0.75rem; border-radius: 8px; text-align: center; background: var(--purple); color: white; position: relative;">
+                <div style="font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.8; margin-bottom: 0.25rem;">🏢 Pilot projektek</div>
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600;">1</div>
+                <div style="font-size: 0.7rem; font-weight: 500; margin-bottom: 0.25rem;">Tapasztalatszerzés</div>
+                <div style="font-size: 0.55rem; opacity: 0.85;">Egyéni használat, workshopok, power user azonosítás</div>
+                <div style="margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid rgba(255,255,255,0.2); font-size: 0.5rem; text-transform: uppercase;">Dorsum ma</div>
+            </div>
+            <!-- Level 2 -->
+            <div style="padding: 0.75rem; border-radius: 8px; text-align: center; background: var(--card); border-top: 3px solid var(--purple); position: relative;">
+                <div style="font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); margin-bottom: 0.25rem;">🏢 Konkrét csapatok</div>
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--purple);">2</div>
+                <div style="font-size: 0.7rem; font-weight: 500; margin-bottom: 0.25rem;">Csapat hatékonyság</div>
+                <div style="font-size: 0.55rem; color: var(--stone-dark);">Egyéni szinten akár 100%+ javulás. 2 hetes sprint → 2 nap.</div>
+            </div>
+            <!-- Level 3 -->
+            <div style="padding: 0.75rem; border-radius: 8px; text-align: center; background: var(--card); border-top: 3px solid var(--orange); position: relative;">
+                <div style="font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--orange); margin-bottom: 0.25rem;">🏢 Teljes üzletágak</div>
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--orange);">3</div>
+                <div style="font-size: 0.7rem; font-weight: 500; margin-bottom: 0.25rem;">Szervezeti hatékonyság</div>
+                <div style="font-size: 0.55rem; color: var(--stone-dark);">Way of working transzformáció, mérhető EBITDA hatás</div>
+            </div>
+            <!-- Level 4 - parallel -->
+            <div style="padding: 0.75rem; border-radius: 8px; text-align: center; background: var(--card); border-top: 3px dashed var(--stone); position: relative; opacity: 0.85;">
+                <div style="font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--stone); margin-bottom: 0.25rem;">🏢 Termékbe épül</div>
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--stone);">4</div>
+                <div style="font-size: 0.7rem; font-weight: 500; margin-bottom: 0.25rem;">AI a termékben</div>
+                <div style="font-size: 0.55rem; color: var(--stone-dark);">Párhuzamosan futhat a 2-3-mal. Revenue hatás.</div>
+            </div>
+            <!-- Level 5 - AI-first -->
+            <div style="padding: 0.75rem; border-radius: 8px; text-align: center; background: white; border: 2px solid var(--purple); position: relative;">
+                <div style="font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); margin-bottom: 0.25rem;">🏢 Intelligence first</div>
+                <div style="font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--purple);">5</div>
+                <div style="font-size: 0.7rem; font-weight: 500; color: var(--purple); margin-bottom: 0.25rem;">AI-first szervezet</div>
+                <div style="font-size: 0.55rem; color: var(--stone-dark);">Nulláról újratervezett működés, adatok, szervezet</div>
+            </div>
+        </div>
+
+        <!-- Journey arrows: 1→2→3 continuous, 4 parallel, 5 different -->
+        <div style="margin-top: 0.5rem; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; font-size: 0.6rem; text-align: center;">
+            <div style="grid-column: 1 / 4; background: linear-gradient(90deg, var(--purple), var(--orange)); height: 3px; border-radius: 2px; margin: 0.25rem 0;"></div>
+            <div style="color: var(--stone); font-style: italic;">↕ párhuzamos</div>
+            <div style="color: var(--purple); font-weight: 600;">★ célállapot</div>
+        </div>
+
+        <!-- Two cards: As-is upgrade + AI-first -->
+        <div class="grid-2" style="margin-top: 0.75rem; gap: 1rem;">
+            <!-- As-is upgrade: 1→2→3 (+4) -->
+            <div class="card" style="border-left: 4px solid var(--purple); padding: 1rem;">
+                <h3 style="color: var(--purple); font-size: 0.9rem; margin-bottom: 0.5rem;">Level 1→2→3: As-is upgrade</h3>
+                <p style="font-size: 0.75rem; line-height: 1.5; color: var(--stone-dark);">
+                    A <strong>meglévő működés fokozatos fejlesztése</strong>. Ugyanazok a folyamatok, de AI-val gyorsabban és kevesebb emberrel.
+                    Egyéni szinten a potenciál <strong>akár 100%+ is lehet</strong> — lásd: 2 hetes sprint megcsinálása 2 nap alatt.
+                </p>
+                <div style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--stone);">
+                    <strong>Level 4</strong> (termékbe épül) ennek természetes része — <strong>párhuzamosan futtatható</strong> a 2-3-mal.
+                </div>
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(0,0,0,0.06); font-size: 0.7rem;">
+                    <span style="color: var(--purple); font-weight: 500;">Üzleti modell:</span> ugyanaz, de hatékonyabb. Mérhető EBITDA.
+                </div>
+            </div>
+
+            <!-- AI-first: Level 5 -->
+            <div class="card purple" style="padding: 1rem;">
+                <h3 style="color: white; font-size: 0.9rem; margin-bottom: 0.5rem;">Level 5: AI-first célállapot</h3>
+                <p style="font-size: 0.75rem; line-height: 1.5;">
+                    Ez <strong>nem az as-is fixálása</strong>. Az AI-first működés alapfeltétele: teljesen <strong>újra kell szervezni a működést, az adatokat, a folyamatokat, a szervezetet</strong>.
+                    Nulláról tervezve, nem ráépítve.
+                </p>
+                <div style="margin-top: 0.5rem; font-size: 0.7rem; opacity: 0.85;">
+                    Minden terület, minden szinten intelligence first. Sales, consulting, management — mind AI-augmented.
+                </div>
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.15); font-size: 0.7rem;">
+                    <span style="font-weight: 500;">Üzleti modell:</span> fundamentálisan más. Új revenue streamek, új működés.
+                </div>
+            </div>
+        </div>
+
+        <div class="stamp"><img src="assets/1337 stamp.png" alt="The Intelligence Company"></div>
+    </section>
+
+    <!-- ==========================================
          SLIDE 8: SECTION DIVIDER — Szervezet, streamek
          Kamill, 5'
          ========================================== -->
